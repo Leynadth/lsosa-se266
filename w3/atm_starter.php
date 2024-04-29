@@ -1,22 +1,50 @@
-
 <?php
-    if (isset ($_POST['withdrawChecking'])) 
-    {
-        echo "I pressed the checking withdrawal button";
-    } 
-    else if (isset ($_POST['depositChecking'])) 
-    {
-        echo "I pressed the checking deposit button";
-    } 
-    else if (isset ($_POST['withdrawSavings'])) 
-    {
-        echo "I pressed the savings withdrawal button";
-    } 
-    else if (isset ($_POST['depositSavings'])) 
-    {
-        echo "I pressed the savings deposit button";
-    } 
-     
+    include __DIR__ . '/checking.php';
+    include __DIR__ . '/savings.php';
+    
+    $checkings = new CheckingAccount('C123', 1000, '03-20-2020');
+    $savings = new SavingsAccount('S123', 5000, '03-20-2020');
+    
+    session_start();
+    $_SESSION['checkings'] = $checkings;
+    $_SESSION['savings'] = $savings;
+    $checkings = $_SESSION['checkings'];
+    $savings = $_SESSION['savings'];
+
+    
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST['withdrawChecking'])) {
+            $amount = $_POST['checkingWithdrawAmount'];
+            if ($checkings->withdrawal($amount)) {
+                echo "Withdrawal from checking account successful.";
+            } else {
+                echo "invalid amount.";
+            }
+        } elseif (isset($_POST['depositChecking'])) {
+            $amount = $_POST['checkingDepositAmount'];
+            if ($amount > 0) {
+                $checkings->deposit($amount);
+                echo "Deposit to checking account successful.";
+            } else {
+                echo "Invalid amount.";
+            }
+        } elseif (isset($_POST['withdrawSavings'])) {
+            $amount = $_POST['savingsWithdrawAmount'];
+            if ($savings->withdrawal($amount)) {
+                echo "Withdrawal from savings account successful.";
+            } else {
+                echo "invalid amount.";
+            }
+        } elseif (isset($_POST['depositSavings'])) {
+            $amount = $_POST['savingsDepositAmount'];
+            if ($amount > 0) {
+                $savings->deposit($amount);
+                echo "Deposit to savings account successful.";
+            } else {
+                echo " Invalid amount.";
+            }
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -52,6 +80,7 @@
             margin-left:10px;margin-top:10px;
         }
     </style>
+
 </head>
 <body>
 
@@ -64,6 +93,9 @@
               
                     
                     <div class="accountInner">
+                        <p><span style="font-weight: 900;">Account ID</span><?= $checkings->getAccountId(); ?></p>
+                        <p><span style="font-weight: 900;">Balance:</span><?= $checkings->getBalance(); ?></p>
+                        <p><span style="font-weight: 900;">Account Opened:</span><?= $checkings->getStartDate(); ?></p>
                         <input type="text" name="checkingWithdrawAmount" value="" />
                         <input type="submit" name="withdrawChecking" value="Withdraw" />
                     </div>
@@ -78,6 +110,9 @@
                
                     
                     <div class="accountInner">
+                        <p><span style="font-weight: 900;">Account ID</span><?= $savings->getAccountId(); ?></p>
+                        <p><span style="font-weight: 900;">Balance:</span><?= $savings->getBalance(); ?></p>
+                        <p><span style="font-weight: 900;">Account Opened:</span><?= $savings->getStartDate(); ?></p>
                         <input type="text" name="savingsWithdrawAmount" value="" />
                         <input type="submit" name="withdrawSavings" value="Withdraw" />
                     </div>

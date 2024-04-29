@@ -7,7 +7,6 @@
 /* Note:
 	You should implement all other methods in the class
 */
-require "./atm_starter.php";
 
 abstract class Account 
 {
@@ -15,14 +14,16 @@ abstract class Account
 	protected $balance;
 	protected $startDate;
 	
-	public function __construct($id, $bal, $startDt) 
+	public function __construct ($id, $bal, $startDt) 
 	{
 		$this->accountId = $id;
 		$this->balance = $bal;
 		$this->startDate = $startDt;
-	}// end constructor
+	} // end constructor
 	
-	public function deposit($amount) 
+
+
+	public function deposit ($amount) 
 	{
 		if ($amount > 0) {
 			$this->balance += $amount;
@@ -51,30 +52,18 @@ abstract class Account
 	{
 		return $this-> accountId;
 	} // end getAccountId
-}
 
-class aAccount extends Account 
-{
-	public function withdrawal($amount) 
-	{
-		if ($this->balance >= $amount) {
-			$this->balance -= $amount;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public function getAccountDetails()
+	// Display AccountID, Balance and StartDate in a nice format
+	protected function getAccountDetails()
 	{
 		$accountDetails = "";
-		$accountDetails .= "Account ID: " . $this->getAccountId() . "<br>";
-		$accountDetails .= "Balance: " . $this->getBalance() . "<br>";
-		$accountDetails .= "Start Date: " . $this->getStartDate() . "<br>";
+		$accountDetails  .= "<p><span style='font-weight: 900;'>Account ID:</span>" .  $this->getAccountId() . "</p>";
+		$accountDetails  .= "<p><span style='font-weight: 900;'>Balance:</span>" .  $this->getBalance() . "</p>";
+		$accountDetails  .= "<p><span style='font-weight: 900;'>Start Date:</span>" .  $this->getStartDate() . "</p>";
 		
 		return $accountDetails;	
-	}
-}
+	} // end getAccountDetails
+	
+} // end account
 
-$c = new aAccount('A123', 1000, '12-20-2019');
-echo $c->getAccountDetails();
+?>
