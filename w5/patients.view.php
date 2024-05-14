@@ -43,7 +43,7 @@
                         <td><?= $p['patientLastName']; ?></td>
                         <td><?= $p['patientMarried']; ?></td> 
                         <td><?= $p['patientBirthDate']; ?></td> 
-                        <td><a class="btn btn-info" href="patients.php?action=edit&id=<?= $t['id'] ?>" style="text-decoration: none;">Edit</a></td>
+                        <td><a class="btn btn-info" href="patients.php?action=edit&id=<?= $p['id'] ?>" style="text-decoration: none;">Edit</a></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

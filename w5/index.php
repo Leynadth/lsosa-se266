@@ -1,6 +1,6 @@
 <?php
 
-header('Location: ../patients.view.php');
+header('Location: patients.view.php');
 
 exit;
 

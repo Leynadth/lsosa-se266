@@ -1,5 +1,6 @@
 <?php
     include __DIR__ . '/models/model_patients.php';
+    
 ?>
 
 <!DOCTYPE html>
@@ -17,6 +18,10 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
     $error = "";
+    $firstName = '';
+    $lastName = '';
+    $married = '';
+    $birthDate = '';
     
     $action = filter_input(INPUT_GET, 'action') ?? 'add';
     $id = filter_input(INPUT_GET, 'id');
@@ -28,10 +33,10 @@
 
         if($action == 'edit'){
             $patient = getPatient($id);
-            $firstName = $firstName['patientFirstName'];
-            $lastName = $lastName['patientLastName'];
-            $married = $married['patientMarried'];
-            $birthDate = $birthDate['patientBirthDate'];
+            $firstName = isset($patient['patientFirstName']) ? $patient['patientFirstName'] : "";
+            $lastName = isset($patient['patientLastName']) ? $patient['patientLastName'] : "";
+            $married = isset($patient['patientMarried']) ? ($patient['patientMarried'] ? 'yes' : 'no') : "";
+            $birthDate = isset($patient['patientBirthDate']) ? $patient['patientBirthDate'] : "";
         }else{
             $firstName = "";
             $lastName = "";
@@ -40,53 +45,36 @@
 
         }
     } 
-
-
-
-
-
-
-    $firstName = '';
-    $lastName = '';
-    $married = '';
-    $birthDate = '';
-    $heightFt = '';
-    $heightInch = '';
-    $weight = '';
     
     if (isset($_POST["storePatient"])) {
         $firstName = filter_input(INPUT_POST, 'firstName' );
         $lastName = filter_input(INPUT_POST, 'lastName');
         $married = filter_input(INPUT_POST, 'married' );
         $birthDate = filter_input(INPUT_POST, 'birthDate');
-        $heightFt = filter_input(INPUT_POST, 'heightFt');
-        $heightInch = filter_input(INPUT_POST, 'heightInch');
-        $weight = filter_input(INPUT_POST, 'weight');
+
 
         if ($firstName == "") $error .= "<li>Please provide first name</li>";
         if ($lastName == "") $error .= "<li>Please provide last name</li>";
         if ($married == "") $error .= "<li>Please provide marital status</li>";
         if ($birthDate == "") $error .= "<li>Please provide birth date</li>";
-        if ($heightFt == "") $error .= "<li>Please provide height (feet)</li>";
-        if ($heightInch == "") $error .= "<li>Please provide height (inches)</li>";
-        if ($weight == "") $error .= "<li>Please provide weight</li>";
+
     }
 
     if (isset($_POST['storePatient']) && $error == "" && $action == 'add'){
-        addTeam ($firstName, $lastName, $married, $birthDate);
-        header('Location: ../patient.view.php');
+        addPatient ($firstName, $lastName, $married, $birthDate);
+        header('Location: patients.view.php');
         exit;
     }
 
     if (isset($_POST['storePatient']) && $error == "" && $action == 'edit'){
-        updateTeam ($id, $firstName, $lastName, $married, $birthDate);
-        header('Location: ../patient.view.php');
+        updatePatient ($id, $firstName, $lastName, $married, $birthDate);
+        header('Location: patients.view.php');
         exit;
     }
 
     if(isset($_POST['deletePatient'])){
-        deleteTeam($id);
-        header('Location: ../patient.view.php');
+        deletePatient($id);
+        header('Location: patients.view.php');
         exit;
     }
 
@@ -157,31 +145,16 @@
         <label>Married:</label>
     </div>
     <div>
-        <input type="text" name="married" value="<?= $married; ?>" />
+        <select name="married">
+            <option value="yes" <?= $married == 'yes' ? 'selected' : ''; ?>>Yes</option>
+            <option value="no" <?= $married == 'no' ? 'selected' : ''; ?>>No</option>
+        </select>
     </div>
     <div class="label">
         <label>Birth Date:</label>
     </div>
     <div>
         <input type="date" name="birthDate" value="<?= $birthDate; ?>" />
-    </div>
-    <div class="label">
-        <label>Height (Feet):</label>
-    </div>
-    <div>
-        <input type="text" name="heightFt" value="<?= $heightFt; ?>" />
-    </div>
-    <div class="label">
-        <label>Height (Inches):</label>
-    </div>
-    <div>
-        <input type="text" name="heightInch" value="<?= $heightInch; ?>" />
-    </div>
-    <div class="label">
-        <label>Weight:</label>
-    </div>
-    <div>
-        <input type="text" name="weight" value="<?= $weight; ?>" />
     </div>
     <div>
         &nbsp;
@@ -193,7 +166,7 @@
         &nbsp;
     </div>             
     <div>
-        <?php if($action == 'edit'): ?><input class="btn btn-danger" type="submit" name="deletePatient" value="DELETE Patient" /><?php endif; ?>
+        <?php if($action == 'edit'): ?><input class="btn btn-danger" type="submit" name="deletePatient" value="DELETE Patient" onclick="href = 'index.php'" /><?php endif; ?>
     </div>
 
     

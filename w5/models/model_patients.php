@@ -61,8 +61,9 @@ function addPatient($pFirstName, $pLastName, $pMarried, $pBirthDate) {
     return ($result);
 }
 
-function updatePatient($pFirstName, $pLastName, $pMarried, $pBirthDate) {
+function updatePatient($id, $pFirstName, $pLastName, $pMarried, $pBirthDate) {
     global $db;
+    $pMarried = ($pMarried === 'yes') ? 1 : 0;
 
     $result = "";
     $sql = "UPDATE patients SET patientFirstName = :f, patientLastName = :l, patientMarried = :m, patientBirthDate = :b WHERE id = :id";
@@ -73,17 +74,20 @@ function updatePatient($pFirstName, $pLastName, $pMarried, $pBirthDate) {
         ":l" => $pLastName,
         ":m" => $pMarried,
         ":b" => $pBirthDate,
-        
-        
+        ":id" => $id,
     );
     
-    
     if ($stmt->execute($binds) && $stmt->rowCount() > 0) {
-        $result = 'Data Added';
+        $result = 'Data Updated';
+        header('Location: patients.view.php');
+        exit;
+    } else {
+        $result = 'Update failed: ' . $stmt->errorInfo()[2];
     }
     
-    return ($result);
+    return $result;
 }
+
 
 function deletePatient($id) {
     global $db;
